@@ -5,7 +5,7 @@ import pathlib
 from datetime import date
 
 
-path = str(pathlib.Path(__file__).parent.absolute())
+path = str(pathlib.Path(__file__).parent.parent.absolute()) + "/data" 
 hoy = date.today().strftime("%d-%m-%Y") # dd/mm/YY
 file = path + f'/actividades_{hoy}.csv'
 
@@ -29,7 +29,7 @@ dfc = df[~df.activty_place.isna()]
 a = list(dfc.activty_place.unique())
 a.append('Todos')
 app.layout = html.Div([
-    html.H4('Cantidad de actividades por zona'),
+    html.H4('Cantidad de actividades por zona filtradas por tipo de lugar'),
     dcc.Graph(id="graph", figure={}),
     html.P("Tipos de lugar:"),
     dcc.Dropdown(id='zona',
