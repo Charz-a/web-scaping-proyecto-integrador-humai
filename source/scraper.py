@@ -7,6 +7,14 @@ import unicodedata
 
 import csv_test as manage_csv
 
+def log_in_txt(data):
+    file = './activity_log.txt'
+    if os.path.isfile(file):
+        with open(file, 'a', encoding='UTF8') as file:
+            file.write(data + '\n')
+    else:
+        with open(file, 'w', encoding='UTF8') as file:            
+            file.write(data + '\n')
 
 def get_json_page(page_num: int):
     url = 'https://disfrutemosba.com/api/search'
@@ -77,6 +85,7 @@ def get_activity(page, places):
     for activity in page['activities']['items']:
         activity_id = activity['id']
         print("Actividad con id: " + str(activity_id))
+        log_in_txt("Actividad con id: " + str(activity_id))
         activty_name = strip_accents(activity['activity']['name'])
         activity_url = "https://disfrutemosba.buenosaires.gob.ar/lugares/" + activity['activity']['slug']
         dates = get_dates(activity_url)
@@ -114,7 +123,10 @@ def push_csv_result():
     
 
 def scrap_activities():
+    print("Current date: " + str(datetime.now()))
+    log_in_txt("Current date: " + str(datetime.now()) )
     print("Script currently in page: 1")
+    log_in_txt("Script currently in page: 1")
     page = get_json_page(1)
     places = get_places(page)
     get_activity(page, places)
@@ -123,8 +135,12 @@ def scrap_activities():
     for pageNum in range(lastPageNum + 1):
         if pageNum > 1:
             print("Script currently in page: "+ str(pageNum))
+            log_in_txt("Script currently in page: "+ str(pageNum))
             page = get_json_page(pageNum)
             get_activity(page, places)
+
+    print("Finished")
+    log_in_txt("Finished")
 
     push_csv_result()
 
