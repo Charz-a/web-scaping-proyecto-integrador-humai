@@ -1,7 +1,6 @@
 import pandas as pd
 import plotly.express as px
 from dash import Dash, dcc, html, Input, Output
-from jupyter_dash import JupyterDash
 import pathlib
 from datetime import date
 
@@ -19,7 +18,7 @@ except:
 
 df['count'] = df[df.columns[0]].count()
 
-dftodas = df.groupby("activity_district").agg({"activity_id": "count"}).reset_index()
+dftodos = df.groupby("activity_district").agg({"activity_id": "count"}).reset_index()
 
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -28,14 +27,14 @@ app = Dash(__name__, external_stylesheets=external_stylesheets)
 # componentes
 dfc = df[~df.activty_place.isna()]
 a = list(dfc.activty_place.unique())
-a.append('Todas')
+a.append('Todos')
 app.layout = html.Div([
     html.H4('Cantidad de actividades por zona'),
     dcc.Graph(id="graph", figure={}),
-    html.P("Names:"),
+    html.P("Tipos de lugar:"),
     dcc.Dropdown(id='zona',
         options=a,
-        value='Todas', clearable=False
+        value='Todos', clearable=False
     ),
 ])
 
@@ -44,14 +43,13 @@ app.layout = html.Div([
     Output("graph", "figure"),
     Input("zona", "value"))
 def generate_chart(lugar: str):
-    if lugar == "Todas":
-        fig = px.pie(dftodas, values="activity_id", names="activity_district") #activity_id tiene valor de count XD
+    if lugar == "Todos":
+        fig = px.pie(dftodos, values="activity_id", names="activity_district") #activity_id tiene valor de count XD
     else:
         dfg = df[df["activty_place"] == lugar].groupby("activity_district").agg({"activity_id": "count"}).reset_index()
         fig = px.pie(dfg, values="activity_id", names="activity_district")
     
     return fig
 
-#print(generate_chart("Todas"))
 if __name__ == '__main__':
-    app.run_server(port=8050, debug=True) #mode='inline'
+    app.run_server(port=8050) #mode='inline'
